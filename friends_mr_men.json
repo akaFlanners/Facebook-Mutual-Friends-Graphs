@@ -1,0 +1,287 @@
+{
+    "id": "1",
+    "friendlists": {
+        "data": [
+			{
+				"id": "10",
+				"list_type": "current_city",
+				"name": "Las Venturas",
+				"members": {
+					"data": [
+						{
+							"id": "1001",
+							"name": "Mr Bounce"
+						},
+						{
+							"id": "1002",
+							"name": "Mr Brave"
+						}
+					],
+					"paging": {
+						"cursors": {
+							"after": "blahblahblah",
+							"before": "blahblahblah"
+						}
+					}
+				}
+			},
+			{
+				"id": "11",
+				"list_type": "current_city",
+				"name": "Los Santos",
+				"members": {
+					"data": [
+						{
+							"id": "1003",
+							"name": "Mr Bump"
+						},
+			
+						{
+							"id": "1004",
+							"name": "Mr Busy"
+						},
+						{
+							"id": "1005",
+							"name": "Mr Chatterbox"
+						}
+					],
+					"paging": {
+						"cursors": {
+							"after": "blahblahblah",
+							"before": "blahblahblah"
+						}
+					}
+				}
+			}
+		],
+		"paging": {
+			"next": "https://graph.facebook.com/blahblahblah"
+		}
+	},
+	"friends": {
+
+		"data": [
+			{
+				"id": "1005",
+				"name": "Mr Chatterbox",
+				"first_name": "Mr",
+				"last_name": "Chatterbox",
+				"gender": "male",
+				"relationship_status": "In a Relationship",
+				"birthday": "01/01/1990",
+				"hometown": {
+					"id": "2001",
+					"name": "Clock Town"
+				},
+				"location": {
+					"id": "2006",
+					"name": "Los Santos"
+				},
+				"locale": "en_MM",
+				"username": "mr.chatterbox.1005",
+				"picture": {
+					"data": {
+						"url": "https://fbcdn-profile-a.akamaihd.net/blahblahblah",
+						"is_silhouette": false
+					}
+				},
+				"mutualfriends": {
+					"data": [
+						{
+							"id": "1001",
+							"name": "Mr Bounce"
+						},
+						{
+							"id": "1003",
+							"name": "Mr Bump"
+						},
+						{
+							"id": "1004",
+							"name": "Mr Busy"
+						},
+						{
+							"id": "1002",
+							"name": "Mr Brave"
+						}
+					],
+					"paging": {
+						"next": "https://graph.facebook.com/blahblahblah"
+					}
+				}
+			},
+			{
+				"id": "1003",
+				"name": "Mr Bump",
+				"first_name": "Mr",
+				"last_name": "Bump",
+				"gender": "male",
+				"hometown": {
+					"id": "2002",
+					"name": "Columbia"
+				},
+				"location": {
+					"id": "2006",
+					"name": "Los Santos"
+				},
+				"locale": "en_MM",
+				"picture": {
+					"data": {
+						"url": "https://fbcdn-profile-a.akamaihd.net/blahblahblah",
+						"is_silhouette": false
+					}
+				},
+				"mutualfriends": {
+					"data": [
+						{
+							"id": "1004",
+							"name": "Mr Busy"
+						},
+						{
+							"id": "1005",
+							"name": "Mr Chatterbox"
+						}
+					],
+					"paging": {
+						"next": "https://graph.facebook.com/blahblahblah"
+					}
+				}
+			},
+			
+			
+			{
+				"id": "1004",
+				"name": "Mr Busy",
+				"first_name": "Mr",
+				"last_name": "Busy",
+				"gender": "male",
+				"hometown": {
+					"id": "2003",
+					"name": "Hollow Bastion"
+				},
+				"location": {
+					"id": "2006",
+					"name": "Los Santos"
+				},
+				"locale": "en_MM",
+				"picture": {
+					"data": {
+						"url": "https://fbcdn-profile-a.akamaihd.net/blahblahblah",
+						"is_silhouette": false
+					}
+				},
+				"mutualfriends": {
+					"data": [
+						{
+							"id": "1001",
+							"name": "Mr Bounce"
+						},
+						{
+							"id": "1005",
+							"name": "Mr Chatterbox"
+						},
+						{
+							"id": "1003",
+							"name": "Mr Bump"
+						}
+					],
+					"paging": {
+						"next": "https://graph.facebook.com/blahblahblah"
+					}
+				}
+			},
+			
+			
+			
+			{
+				"id": "1004",
+				"name": "Mr Brave",
+				"first_name": "Mr",
+				"last_name": "Brave",
+				"gender": "male",
+				"hometown": {
+					"id": "2004",
+					"name": "Kakariko Village"
+				},
+				"location": {
+					"id": "2005",
+					"name": "Las Venturas"
+				},
+				"locale": "en_MM",
+				"picture": {
+					"data": {
+						"url": "https://fbcdn-profile-a.akamaihd.net/blahblahblah",
+						"is_silhouette": false
+					}
+				},
+				"mutualfriends": {
+					"data": [
+						{
+							"id": "1005",
+							"name": "Mr Chatterbox"
+						}
+					],
+					"paging": {
+						"next": "https://graph.facebook.com/blahblahblah"
+					}
+				}
+			},
+			
+			
+						{
+				"id": "1004",
+				"name": "Mr Bounce",
+				"first_name": "Mr",
+				"last_name": "Bounce",
+				"gender": "male",
+				"hometown": {
+					"id": "2007",
+					"name": "Oakvale"
+				},
+				"location": {
+					"id": "2005",
+					"name": "Las Venturas"
+				},
+				"locale": "en_MM",
+				"picture": {
+					"data": {
+						"url": "https://fbcdn-profile-a.akamaihd.net/blahblahblah",
+						"is_silhouette": false
+					}
+				},
+				"mutualfriends": {
+					"data": [
+						{
+							"id": "1004",
+							"name": "Mr Busy"
+						},
+						{
+							"id": "1005",
+							"name": "Mr Chatterbox"
+						}
+					],
+					"paging": {
+						"next": "https://graph.facebook.com/blahblahblah"
+					}
+				}
+			},
+            {
+                "id": "1006",
+                "name": "Mr Cheeky",
+                "first_name": "Mr",
+                "last_name": "Cheeky",
+                "gender": "male",
+                "locale": "en_MM",
+                "username": "mr.cheeky.1006",
+                "picture": {
+                    "data": {
+                        "url": "https://fbcdn-profile-a.akamaihd.net/blahblahblah",
+                        "is_silhouette": false
+                    }
+                }
+            }
+        ],
+        "paging": {
+            "next": "https://graph.facebook.com/blahblahblah"
+        }
+    }
+}
