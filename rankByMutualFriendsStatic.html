@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+	<head>
+  		<meta charset="UTF-8">
+		<title>Processing JSON data</title>
+		<style>
+			.bar {shape-rendering: crispEdges;}
+			.chart {background-color:white; border: 1px black solid;}
+			.chart .outer {fill: #FFFFDD;}
+			.axis path, .axis line {fill: none; stroke: #000; shape-rendering: crispEdges;}
+			.odd {fill: rgb(12,56,186)}
+			.even {fill: rgb(186,56,12)}
+			.removed {display:none;}
+			.display{display:inline;}
+			
+			html body svg.chart1 g g g.y g:nth-child(even) text {fill:red; /*display:none;*/}
+            html body svg.chart1 g g g.y g:nth-child(odd) text  {fill:blue;}
+			
+			html body svg.chart2 g g g.x g:nth-child(even) text {fill:red; /*display:none;*/}
+			html body svg.chart2 g g g.x g:nth-child(odd) text  {fill:blue;}
+			
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="http://d3js.org/d3.v3.min.js"></script>
+	</head>
+	<body>
+		<script>
+		
+		setupGlobals();
+		drawGraph1();
+		drawGraph2();
+		outputListItems(items);
+		
+		//Set data and dimensions set as global scoped variables.
+		function setupGlobals() {
+			data = [63, 93, 73, 55, 31, 31, 30, 27, 25, 20, 
+					18, 21, 17, 9, 17, 10, 14, 7, 2, 7, 11, 
+					6, 6, 4, 7, 3, 4, 6, 5, 8, 7, 3, 8, 9, 
+					4, 1, 4, 2, 3, 5, 5, 3, 5, 2, 3, 5, 2, 
+					1, 4, 1, 2, 1, 0, 0, 1, 0, 1, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+					0, 0, 0, 0, 0, 1];
+			
+			//Explicitly create the dimensions we'll set
+			var explicit = { 
+								margin: {top: 20, right: 20, bottom: 20, left: 20},
+								padding: {top: 80, right: 80, bottom: 80, left: 80},
+								outerWidth: 1000,
+								outerHeight: 1000, 
+								spacing: 1
+						}
+						
+			//Calculate inferred dimensions form those explicitly set			
+			var inferred	=	{
+								innerWidth: explicit.outerWidth - explicit.margin.left - explicit.margin.right,
+								innerHeight: explicit.outerHeight - explicit.margin.top - explicit.margin.bottom,
+								width: explicit.outerWidth - explicit.margin.left - explicit.margin.right - explicit.padding.left - explicit.padding.right,
+								height: explicit.outerHeight - explicit.margin.top - explicit.margin.bottom - explicit.padding.top - explicit.padding.bottom, 
+								barHeight: (explicit.outerHeight - explicit.margin.top - explicit.margin.bottom - explicit.padding.top - explicit.padding.bottom) / data.length
+							}
+							
+			//Put these dimensions into global scope for usage from 1 object e.g. dimensions.explicit.barHeight
+			dimensions = {explicit: explicit, inferred: inferred} 
+		}
+		
+		function drawGraph1() {
+
+			//Create our svg object and append a group object inside it.
+			var svg = d3.select("body").append("svg")
+						.attr("class", "chart chart1")
+						.attr("width", dimensions.explicit.outerWidth)
+						.attr("height", dimensions.explicit.outerHeight)  
+						.append("g")
+						.attr("transform", "translate(" + dimensions.explicit.margin.left + "," + dimensions.explicit.margin.top + ")");
+						
+			//Create a new rect just used to provide a background colour
+			svg.append("rect")
+						.attr("class", "outer")
+						.attr("width", dimensions.inferred.innerWidth)
+						.attr("height", dimensions.inferred.innerHeight);
+	
+	        // Greate a new group object, allowing room for borders, to contain the chart data and axes
+	        var g = svg.append("g")
+                       .attr("transform", "translate(" + dimensions.explicit.padding.left + "," + dimensions.explicit.padding.top + ")");			
+			
+			//X Scale will go from 0 to the number of distinct data items. Scaled to fit the height.
+			var x = d3.scale.linear()
+						.domain([0, d3.max(data)])
+						.range([0, dimensions.inferred.width]);
+
+			//Y Scale will go from 0 to max data frequency value. This is scaled to the width we are using. 
+			//Call xscale(i) to get specific y position
+			//Call xscale.rangeBand() to get the width of the item
+			//The domain needs to be passed an array of values. d3.range(data.length) passses back an array of the indexes of data i.e. [0,1,2,3,4].
+			var y = d3.scale.ordinal()
+						.domain(d3.range(data.length))
+						.rangeBands([dimensions.inferred.height, 0]);
+						
+			//Draw the bars on the chart
+			g.selectAll("rect")
+						.data(data)
+						.enter()
+						.append("rect")
+						.attr("x",      function(d) {
+														return 0;
+						})
+						.attr("width",  function(d) { 
+														return x(d);
+						})
+						.attr("y",      function(d, i) { 
+														return dimensions.inferred.height - (y.rangeBand() * i) - y.rangeBand();
+						})
+						.attr("height", function(i) { 
+														return y.rangeBand();
+						})
+						.attr("class", function(d,i) {   
+														if(i % 2 == 0) {
+															return "odd";
+														}
+														else {
+															return "even";
+														}
+						
+						});
+
+			var xAxis = function () {
+								    //Obtain number of ticks.
+									//Get length of axis.
+									//Distance /ticks = distance between ticks.
+									//If distance between ticks is too low - need to define new.
+									
+									var ticks = d3.max(data);
+									var tickDistance = dimensions.inferred.width / ticks  //for vertical need a minimum of 40
+									var minTickDistance = dimensions.inferred.width / 40;
+									if(tickDistance < minTickDistance) {
+										ticks = Math.ceil(minTickDistance);
+									}
+
+									//We do not need to worry about intervals of 5 as ticks() is only a suggestion and handles that for us.
+									return d3.svg.axis()
+											.scale(x)
+											.ticks(ticks)
+											.orient("bottom");
+							}();			
+						
+						
+						
+						
+						
+						
+			var yAxis = function () {
+									return d3.svg.axis()
+												.scale(y)
+												.orient("left");
+						}();					
+						
+						
+			//Apply the axes last so that they always appear on top of other content (svg renders later items on top).
+			g.append("g")
+						.attr("class", "x axis")
+						.attr("transform", "translate(0," + dimensions.inferred.height + ")")
+						.call(xAxis)
+						.append("text")
+							.attr("x", x(d3.max(data) / 2))
+							.attr("y", (dimensions.explicit.padding.bottom / 2) + 10)
+							.style("text-anchor", "middle")
+							.text("Frequency");
+							
+							// * -1
+
+			g.append("g")
+						.attr("class", "y axis")
+						.call(yAxis)
+						.append("text")
+							.attr("transform", "rotate(-90)")
+							.attr("x", y.rangeBand() * (data.length / 2) * -1)
+							.attr("y", (dimensions.explicit.padding.left / 2) * -1)
+							.style("text-anchor", "middle")
+							.text("Number of Mutual Facebook Friends");	
+
+
+			//Hide compressed ticks from the y axis if there are too many.
+			var minTickDistance = 20;
+			var ticks = data.length
+			var tickDistance = dimensions.inferred.height / ticks  // for horizontal need a minimum of 40
+			var maxTicks = dimensions.inferred.height / minTickDistance;  // based on knowledge of the width of the values - for truely dynamic we'd need to know widths.
+ 
+			if(tickDistance < minTickDistance) {
+
+				mod = Math.ceil(minTickDistance / tickDistance);
+	
+				if (mod<=2) {
+					mod = 2;
+				}
+				else if (mod <= 15) {
+					while(mod%5 != 0) {  //Get the mod to closest multiple of 5.
+						mod++;
+					}
+				}
+				else {
+					while(mod%10 != 0) {  //Get the mod to closest multiple of 5.
+						mod++;
+					}
+				}
+
+				d3.selectAll("svg.chart1 g.y g.tick:nth-child("+mod+"n+1).tick").attr("class", "display");			
+				d3.selectAll("svg.chart1 g.y g.tick").attr("class", "removed");
+			}
+
+
+							
+
+		}	
+		
+		function drawGraph2() {
+		
+			//We have the dimension and tally data in global scope already.
+		
+			//Create our svg object and append a group object inside it.
+			var svg = d3.select("body").append("svg")
+						.attr("class", "chart chart2")
+						.attr("width", dimensions.explicit.outerWidth)
+						.attr("height", dimensions.explicit.outerHeight)  
+						.append("g")
+						.attr("transform", "translate(" + dimensions.explicit.margin.left + "," + dimensions.explicit.margin.top + ")");
+
+			//Create a new rect just used to provide a background colour
+			svg.append("rect")
+						.attr("class", "outer")
+						.attr("width", dimensions.inferred.innerWidth)
+						.attr("height", dimensions.inferred.innerHeight);	
+						
+			// Greate a new group object, allowing room for borders, to contain the chart data and axes
+	        var g = svg.append("g")
+                       .attr("transform", "translate(" + dimensions.explicit.padding.left + "," + dimensions.explicit.padding.top + ")");			
+						
+			//X Scale will go from 0 to max data frequency value. This is scaled to the width we are using. 
+			//Call xscale(i) to get specific x position
+			//Call xscale.rangeBand() to get the width of the item
+			//The domain needs to be passed an array of values. d3.range(data.length) passses back an array of the indexes of data i.e. [0,1,2,3,4].
+			var x = d3.scale.ordinal()
+						.domain(d3.range(data.length))
+						.rangeBands([0, dimensions.inferred.width]);
+		
+			//Y Scale will go from 0 to the number of distinct data items. Scaled to fit the height.
+			var y = d3.scale.linear()
+						.domain([0, d3.max(data)])
+						.range([dimensions.inferred.height, 0]);
+
+			//Draw the bars on the chart
+			g.selectAll("rect")
+						.data(data)
+						.enter()
+						.append("rect")
+						.attr("x",      function(d,i) { 
+														return x(i);
+						})
+						.attr("width",  function(d,i) { 
+														return x.rangeBand();
+						})
+						.attr("y",      function(d) { 
+														return y(d);
+						})
+						.attr("height", function(d) { 
+														return dimensions.inferred.height - y(d);
+						})
+						.attr("class", function(d,i) {   
+														if(i % 2 == 0) {
+															return "odd";
+														}
+														else {
+															return "even";
+														}
+						
+						});
+						
+			var xAxis = function() {
+								return d3.svg.axis()
+								.scale(x)        
+								.orient("bottom");
+			}();
+						
+			var yAxis = function () {
+								    //Obtain number of ticks.
+									//Get length of axis.
+									//Distance /ticks = distance between ticks.
+									//If distance between ticks is too low - need to define new.
+									
+									var ticks = d3.max(data);
+									var tickDistance = dimensions.inferred.height / ticks  //for vertical need a minimum of 3s0
+									var minTickDistance = dimensions.inferred.height / 30;
+									if(tickDistance < minTickDistance) {
+										ticks = Math.ceil(minTickDistance);
+									}
+									
+									//We do not need to worry about intervals of 5 as ticks() is only a suggestion and handles that for us.
+									return d3.svg.axis()
+											.scale(y)
+											.ticks(ticks)
+											.orient("left");
+						}();
+
+			//Apply the axes last so that they always appear on top of other content (svg renders later items on top).
+			g.append("g")
+						.attr("class", "x axis")
+						.attr("transform", "translate(0," + dimensions.inferred.height + ")")
+						.call(xAxis)
+						.append("text")
+							.attr("x", x.rangeBand() * (data.length / 2))
+							.attr("y", (dimensions.explicit.padding.bottom / 2) + 10 )
+							.style("text-anchor", "middle")
+							.text("Number of Mutual Facebook Friends");
+							
+			//newbie.attr("class", "bye").text("Number of Mutual Facebook Friends2");	
+							
+							
+							
+			//Hide compressed ticks from the x axis if there are too many.
+			var minTickDistance = 30;
+			var ticks = data.length;
+			var tickDistance = dimensions.inferred.width / ticks //for horizontal minTick distance is 30 (should actually base this on number of characters in max label).
+
+			if(tickDistance < minTickDistance) {
+
+				mod = Math.ceil(minTickDistance / tickDistance);
+
+				if (mod<=2) {
+					mod = 2;
+				}
+				else if (mod <= 15) {
+					while(mod%5 != 0) {  //Get the mod to closest multiple of 5.
+						mod++;
+					}
+				}
+				else {
+					while(mod%10 != 0) {  //Get the mod to closest multiple of 5.
+						mod++;
+					}
+				}
+
+				d3.selectAll("svg.chart2 g.x g.tick:nth-child("+mod+"n+1).tick").attr("class", "display");			
+				d3.selectAll("svg.chart2 g.x g.tick").attr("class", "removed");
+			}
+				
+
+			g.append("g")
+						.attr("class", "y axis")
+						.call(yAxis)
+						.append("text")
+							.attr("transform", "rotate(-90)")
+							.attr("x", y(d3.max(data) / 2) * -1)
+							.attr("y", (dimensions.explicit.padding.left / 2) * -1)
+							.style("text-anchor", "middle")
+							.text("Frequency");
+		}
+		</script>
+	</body>
+</html>
