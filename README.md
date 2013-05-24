@@ -1,7 +1,7 @@
 Facebook-Mutual-Friends-Graphs
 ==============================
 
-Using a Faceook json file (instructions for obtaining contained within) display a graph of mutual friends.
+Using a Facebook json file (instructions for obtaining contained within) display a graph of mutual friends.
 
 Note: Most browsers will require the files to be hosted on a sever due to local file system access restrictions.
 
